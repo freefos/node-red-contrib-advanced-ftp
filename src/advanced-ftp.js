@@ -329,7 +329,13 @@ module.exports = function (RED) {
                             } catch (err) {
                                 node.handleErrors(err);
                             }
-                        } else if (operation == 'put' || operation == 'putrename') {
+                        } else if (operation == 'put') {
+                            conn.end();
+                            node.status({ fill: 'green', shape: 'ring', text: 'PUT Successful' });
+                            msg.filename = filename;
+                            msg.localFilename = localFilename;
+                            msg.payload = 'PUT operation successful.';
+                        } else if (operation == 'putrename') {
                             conn.end();
                             node.status({ fill: 'green', shape: 'ring', text: 'PUT Successful' });
                             msg.filename = filename;
@@ -434,7 +440,7 @@ module.exports = function (RED) {
                             conn.end();
                             node.status({ fill: 'green', shape: 'ring', text: 'RENAME Successful' });
                             msg.payload = 'RENAME of PUTRENAME operation successful.';
-                            msg.filename = oldPath;
+                            msg.oldPath = oldPath;
                             msg.newPath = newPath;
                         }
 
@@ -614,8 +620,35 @@ module.exports = function (RED) {
                                 conn.site(command, node.siteCommand);
                                 break;
                             case 'putrename':
-                                conn.put(localFilename, filename, useCompression, node.sendMsg);
-                                conn.rename(filename, newPath, node.sendPaths);
+                                //conn.put(localFilename, filename, useCompression, node.sendMsg);
+                                //conn.rename(filename, newPath, node.sendPaths);
+                                
+                                conn.put(localFilename, filename, useCompression, function (err) {
+                                    if (err) {
+                                        if (throwError) node.error(err, msg);
+                                        if (showError) node.status({ fill: 'red', shape: 'ring', text: 'PUT Failed' });
+                                        conn.end();
+                                        return;
+                                    }
+                            
+                                    // Proceed with rename only after put is successful
+                                    conn.rename(filename, newPath, function (err) {
+                                        if (err) {
+                                            if (throwError) node.error(err, msg);
+                                            if (showError) node.status({ fill: 'red', shape: 'ring', text: 'RENAME Failed' });
+                                            conn.end();
+                                            return;
+                                        }
+                            
+                                        conn.end();
+                                        node.status({ fill: 'green', shape: 'ring', text: 'PUTRENAME Successful' });
+                                        msg.payload = 'PUTRENAME operation successful.';
+                                        msg.filename = filename;
+                                        msg.localFilename = localFilename;
+                                        msg.newPath = newPath;
+                                        send(msg);
+                                    });
+                                });
                                 break;
                         }
                     });
