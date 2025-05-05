@@ -628,6 +628,9 @@ module.exports = function (RED) {
                                         if (throwError) node.error(err, msg);
                                         if (showError) node.status({ fill: 'red', shape: 'ring', text: 'PUT Failed' });
                                         conn.end();
+                                        msg.error = err;
+                                        msg.payload = 'PUT operation failed.';
+                                        send(msg);
                                         return;
                                     }
                             
@@ -637,6 +640,9 @@ module.exports = function (RED) {
                                             if (throwError) node.error(err, msg);
                                             if (showError) node.status({ fill: 'red', shape: 'ring', text: 'RENAME Failed' });
                                             conn.end();
+                                            msg.error = err;
+                                            msg.payload = 'RENAME operation failed.';
+                                            send(msg);
                                             return;
                                         }
                             
