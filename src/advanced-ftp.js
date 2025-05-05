@@ -433,7 +433,7 @@ module.exports = function (RED) {
                         if (operation == 'putrename') {
                             conn.end();
                             node.status({ fill: 'green', shape: 'ring', text: 'RENAME Successful' });
-                            msg.payload = 'RENAME operation successful.';
+                            msg.payload = 'RENAME of PUTRENAME operation successful.';
                             msg.filename = oldPath;
                             msg.newPath = newPath;
                         }
