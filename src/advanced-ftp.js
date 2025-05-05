@@ -58,6 +58,7 @@ module.exports = function (RED) {
         this.newPath = n.newPath
         this.useCompression = n.useCompression;
         this.recursive = n.recursive;
+        this.sendError = n.sendError;
         this.throwError = n.throwError;
         this.showError = n.showError;
         this.ftpConfig = RED.nodes.getNode(this.ftp);
@@ -141,6 +142,13 @@ module.exports = function (RED) {
                     useCompression = msg.useCompression;
                 }
 
+                // The msg.sendError takes precedence over the sendError set in the node
+                var sendError = node.sendError;
+
+                if ((msg.sendError !== undefined) && (typeof msg.sendError === 'boolean')) {
+                    sendError = msg.sendError;
+                }
+
                 // The msg.showError takes precedence over the showError set in the node
                 var showError = node.showError;
 
@@ -174,6 +182,12 @@ module.exports = function (RED) {
                             if (throwError) node.error(err, msg);
                         }
                         if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                        if (sendError) {
+                            msg.error = err;
+                            msg.payload = 'Operation Aborted';
+                            msg.success = false;
+                            send(msg);
+                        }
                         return;
                     }
 
@@ -215,6 +229,12 @@ module.exports = function (RED) {
                             if (command === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -222,6 +242,12 @@ module.exports = function (RED) {
                             if (filename === '' || localFilename === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -229,6 +255,12 @@ module.exports = function (RED) {
                             if (filename === '' || localFilename === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -236,6 +268,12 @@ module.exports = function (RED) {
                             if (filename === '' || localFilename === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -243,6 +281,12 @@ module.exports = function (RED) {
                             if (oldPath === '' || newPath === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -250,6 +294,12 @@ module.exports = function (RED) {
                             if (newPath === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -257,6 +307,12 @@ module.exports = function (RED) {
                             if (oldPath === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -264,6 +320,12 @@ module.exports = function (RED) {
                             if (filename === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
@@ -277,12 +339,24 @@ module.exports = function (RED) {
                             if (filename === '' || localFilename === '' || newPath === '') {
                                 if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase() + " : filename: " + filename + " localfilename:" + localFilename + " newPath:" + newPath);
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                if (sendError) {
+                                    msg.error = "Invalid Parameters for " + operation.toLocaleUpperCase();
+                                    msg.payload = 'Operation Aborted';
+                                    msg.success = false;
+                                    send(msg);
+                                }
                                 return;
                             }
                             break;
                         default:
                             if (throwError) node.error("Invalid Command");
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: "Invalid Operation" });
+                            if (sendError) {
+                                msg.error = "Invalid Command";
+                                msg.payload = 'Operation Aborted';
+                                msg.success = false;
+                                send(msg);
+                            }
                             return;
                     }
 
@@ -301,6 +375,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -390,6 +470,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -419,6 +505,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -459,6 +551,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -476,6 +574,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -500,6 +604,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -524,6 +634,12 @@ module.exports = function (RED) {
                                 if (throwError) node.error(err, msg);
                             }
                             if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + ' Failed' });
+                            if (sendError) {
+                                msg.error = err;
+                                msg.payload = operation.toLocaleUpperCase() + ' Failed';
+                                msg.success = false;
+                                send(msg);
+                            }
                             conn.end();
                             return;
                         }
@@ -611,11 +727,14 @@ module.exports = function (RED) {
                                     if (err) {
                                         if (throwError) node.error(err, msg);
                                         if (showError) node.status({ fill: 'red', shape: 'ring', text: 'PUT Failed' });
+                                        // Handle the error for PUT operation
+                                        if (sendError) {
+                                            msg.error = err;
+                                            msg.payload = 'PUT operation failed.';
+                                            msg.success = false;
+                                            send(msg);
+                                        }
                                         conn.end();
-                                        msg.error = err;
-                                        msg.payload = 'PUT operation failed.';
-                                        msg.success = false;
-                                        send(msg);
                                         return;
                                     }
                             
@@ -624,11 +743,14 @@ module.exports = function (RED) {
                                         if (err) {
                                             if (throwError) node.error(err, msg);
                                             if (showError) node.status({ fill: 'red', shape: 'ring', text: 'RENAME Failed' });
-                                            conn.end();
-                                            msg.error = err;
-                                            msg.payload = 'RENAME operation failed.';
-                                            msg.success = false;
-                                            send(msg);
+                                            // Handle the error for RENAME operation
+                                            if (sendError) {
+                                                msg.error = err;
+                                                msg.payload = 'RENAME operation failed.';
+                                                msg.success = false;
+                                                send(msg);
+                                            }
+                                            conn.end();                                            
                                             return;
                                         }
                             
@@ -651,6 +773,12 @@ module.exports = function (RED) {
                 conn.on('error', function (err) {
                     if (throwError) node.error(err, msg);
                     if (showError) node.status({ fill: 'red', shape: 'ring', text: err.message });
+                    if (sendError) {
+                        msg.error = err;
+                        msg.payload = 'Connection Error';
+                        msg.success = false;
+                        send(msg);
+                    }
                     return;
                 });
 

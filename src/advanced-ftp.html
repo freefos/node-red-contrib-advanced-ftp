@@ -256,6 +256,8 @@ limitations under the License.
 <dd>determines whether errors are to be handled by the status node.</dd>
 <dt class="optional">throwError <span class="property-type">boolean</span></dt>
 <dd>determines whether errors are to be handled by the catch node.</dd>
+<dt class="optional">sendError <span class="property-type">boolean</span></dt>
+<dd>determines whether errors are send to the output.</dd>
 </dl>
 <h3>Outputs</h3>
 <ol class="node-ports">
@@ -478,6 +480,10 @@ limitations under the License.
     <label for="node-input-useCompression"><i class="fa fa-file-archive-o"></i> Use Compression</label>
     <input type="checkbox" id="node-input-useCompression">
   </div>
+  <div class="form-row input-sendError-row">
+    <label for="node-input-sendError"><i class="fa fa-file-circle-exclamation"></i> Send Error</label>
+    <input type="checkbox" id="node-input-sendError">
+  </div>
   <div class="form-row input-throwError-row">
     <label for="node-input-throwError"><i class="fa fa-exclamation-triangle"></i> Throw Error</label>
     <input type="checkbox" id="node-input-throwError">
@@ -510,6 +516,7 @@ limitations under the License.
       command: { value: '' },
       recursive: { value: false },
       useCompression: { value: false },
+      sendError: { value: false },
       throwError: { value: false },
       showError: { value: true },
       name: { value: '' }
