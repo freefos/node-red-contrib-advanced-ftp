@@ -615,7 +615,7 @@ module.exports = function (RED) {
                                 break;
                             case 'putrename':
                                 conn.put(localFilename, filename, useCompression, node.sendMsg);
-                                conn.rename(oldPath, newPath, node.sendPaths);
+                                conn.rename(filename, newPath, node.sendPaths);
                                 break;
                         }
                     });
