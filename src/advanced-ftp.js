@@ -275,7 +275,7 @@ module.exports = function (RED) {
                             break;
                         case 'putrename':
                             if (filename === '' || localFilename === '' || newPath === '') {
-                                if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
+                                if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase() + " : filename: " + filename + " localfilename:" + localFilename + " newPath:" + newPath);
                                 if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
                                 return;
                             }
