@@ -436,6 +436,7 @@ limitations under the License.
       <option value="site">SITE</option>
       <option value="size">SIZE</option>
       <option value="lastMod">LAST MOD</option>
+      <option value="putrename">PUTRENAME</option>
     </select>
   </div>
   <div class="form-row">
@@ -616,6 +617,16 @@ limitations under the License.
           command.show();
           recursive.hide();
           useCompression.hide();
+        }
+        else if (id == 'putrename') {
+          filename.show();
+          localFilename.show();
+          workingDir.hide();
+          oldPath.hide();
+          newPath.show();
+          command.hide();
+          recursive.hide();
+          useCompression.show();
         }
         else {
           filename.show();

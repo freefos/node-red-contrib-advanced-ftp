@@ -19,7 +19,7 @@ module.exports = function (RED) {
     var ftp = require('ftp');
     var fs = require('fs')
 
-    //Funzione per la configurazione
+    // Function for configuration
     function AdvancedFtpNode(n) {
         RED.nodes.createNode(this, n);
         var credentials = RED.nodes.getCredentials(n.id) || {};
@@ -36,17 +36,17 @@ module.exports = function (RED) {
         };
     }
 
-    //Registra il Node
+    // Register the Node
     RED.nodes.registerType('advanced-ftp-config', AdvancedFtpNode, {
         credentials: {
             password: { type: 'password' }
         }
     });
 
-    //Funzione per il nodo FTP
+    // Function for the FTP node
     function AdvancedFtpInNode(n) {
         RED.nodes.createNode(this, n);
-        //Imposta le variabili locali
+        // Set local variables
         this.ftp = n.ftp;
         this.operation = n.operation;
         this.dataType = n.dataType;
@@ -64,10 +64,10 @@ module.exports = function (RED) {
 
         this.status({});
 
-        //Se la configurazione è presente continua
+        // If the configuration is present, continue
         if (this.ftpConfig) {
             var node = this;
-            //Il nodo ha ricevuto un input
+            // The node has received an input
             node.on('input', function (msg, send, done) {
 
                 node.status({});
@@ -75,27 +75,27 @@ module.exports = function (RED) {
                 // If this is pre-1.0, 'send' will be undefined, so fallback to node.send
                 send = send || function () { node.send.apply(node, arguments) }
 
-                //Crea un costruttore per il server ftp
+                // Create a constructor for the FTP server
                 var conn = new ftp();
                 
-                // Permetti all'utente di motificare le opzioni
+                // Allow the user to modify the options
                 var options = msg.options || node.ftpConfig.options;
 
                 delete msg.options;
 
-                //Il msg.filename è prioritario sul filename impostato nel nodo
+                // The msg.filename takes precedence over the filename set in the node
                 var filename = msg.filename || node.filename || '';
                 if (typeof filename != 'string') {
                     filename = '';
                 }
 
-                //Il msg.command è prioritario sul command impostato nel nodo
+                // The msg.command takes precedence over the command set in the node
                 var command = msg.command || node.command || '';
                 if (typeof command != 'string') {
                     command = '';
                 }
 
-                //Il msg.dataType è prioritario sul dataType impostato nel nodo
+                // The msg.dataType takes precedence over the dataType set in the node
                 var dataType = msg.dataType || node.dataType || '';
                 if (typeof dataType != 'string') {
                     dataType = 'binary';
@@ -103,65 +103,65 @@ module.exports = function (RED) {
 
                 dataType = dataType.toLocaleLowerCase();
 
-                //Il msg.localFilename è prioritario sul localFilename impostato nel nodo
+                // The msg.localFilename takes precedence over the localFilename set in the node
                 var localFilename = msg.localFilename || node.localFilename || '';
                 if (typeof localFilename != 'string') {
                     localFilename = '';
                 }
 
-                //Il msg.oldPath è prioritario sul oldPath impostato nel nodo
+                // The msg.oldPath takes precedence over the oldPath set in the node
                 var oldPath = msg.oldPath || msg.path || node.oldPath || '';
                 if (typeof oldPath != 'string') {
                     oldPath = '';
                 }
 
-                //Il msg.newPath è prioritario sul newPath impostato nel nodo
+                // The msg.newPath takes precedence over the newPath set in the node
                 var newPath = msg.newPath || msg.path || node.newPath || '';
                 if (typeof newPath != 'string') {
                     newPath = '';
                 }
 
-                //Il msg.workingDir è prioritario sul workingDir impostato nel nodo
+                // The msg.workingDir takes precedence over the workingDir set in the node
                 var workingDir = msg.workingDir || node.workingDir || '';
                 if (typeof workingDir != 'string') {
                     workingDir = '';
                 }
 
-                //Il msg.recursive è prioritario sul recursive impostato nel nodo
+                // The msg.recursive takes precedence over the recursive set in the node
                 var recursive = node.recursive;
 
                 if ((msg.recursive !== undefined) && (typeof msg.recursive === 'boolean')) {
                     recursive = msg.recursive;
                 }
 
-                //Il msg.useCompression è prioritario sul useCompression impostato nel nodo
+                // The msg.useCompression takes precedence over the useCompression set in the node
                 var useCompression = node.useCompression;
 
                 if ((msg.useCompression !== undefined) && (typeof msg.useCompression === 'boolean')) {
                     useCompression = msg.useCompression;
                 }
 
-                //Il msg.showError è prioritario sul showError impostato nel nodo
+                // The msg.showError takes precedence over the showError set in the node
                 var showError = node.showError;
 
                 if ((msg.showError !== undefined) && (typeof msg.showError === 'boolean')) {
                     showError = msg.showError;
                 }
 
-                //Il msg.throwError è prioritario sul throwError impostato nel nodo
+                // The msg.throwError takes precedence over the throwError set in the node
                 var throwError = node.throwError;
 
                 if ((msg.throwError !== undefined) && (typeof msg.throwError === 'boolean')) {
                     throwError = msg.throwError;
                 }
 
-                //Il msg.operation è prioritario sul operation impostato nel nodo
+                // The msg.operation takes precedence over the operation set in the node
                 var operation = msg.operation || node.operation || '';
                 if (typeof operation != 'string') {
                     operation = '';
                 }
 
-                //Il msg.abort è prioritario sul abort impostato nel nodo
+                // The msg.abort takes precedence over the abort set in the node
                 var abort = msg.abort;
 
                 this.abortCommand = function (err) {
@@ -193,23 +193,23 @@ module.exports = function (RED) {
                 } else {
                     operation = operation.toLocaleLowerCase();
 
-                    //Gestisci operation quando viene inviato tramite un oggetto json
+                    // Manage operation when sent via a JSON object
 
                     switch (operation) {
                         case 'status':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'list':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'listsafe':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'lastmod':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'size':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'site':
                             if (command === '') {
@@ -268,10 +268,17 @@ module.exports = function (RED) {
                             }
                             break;
                         case 'pwd':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
                             break;
                         case 'system':
-                            // Non fare niente, non richiede parametri aggiuntivi
+                            // Do nothing, does not require additional parameters
+                            break;
+                        case 'putrename':
+                            if (filename === '' || localFilename === '' || newPath === '') {
+                                if (throwError) node.error("Invalid Parameters for " + operation.toLocaleUpperCase());
+                                if (showError) node.status({ fill: 'red', shape: 'ring', text: operation.toLocaleUpperCase() + " :Invalid Parameters" });
+                                return;
+                            }
                             break;
                         default:
                             if (throwError) node.error("Invalid Command");
@@ -279,10 +286,10 @@ module.exports = function (RED) {
                             return;
                     }
 
-                    //Visulizza lo status del nodo
+                    // Display the status of the node
                     node.status({ fill: 'yellow', shape: 'ring', text: operation.toLocaleUpperCase() + ' Operation: ' + options.host + ':' + options.port });
 
-                    //Messaggi per le funzioni GET, PUT, APPEND, DELETE, LIST
+                    // Messages for the GET, PUT, APPEND, DELETE, LIST functions
                     this.sendMsg = function (err, result) {
 
                         if (err) {
@@ -350,7 +357,7 @@ module.exports = function (RED) {
                         }
                     };
 
-                    //Gestisci l'errore del' operazione GET
+                    // Handle the error of the GET operation
                     this.handleErrors = function (err) {
 
                         node.status({ fill: 'red', shape: 'ring', text: 'Something went wrong...' });
@@ -372,6 +379,7 @@ module.exports = function (RED) {
                     }
 
 
+                    // Handle the status response
                     this.sendStatus = function (err, result) {
                         if (err) {
                             if (done) {
@@ -400,6 +408,7 @@ module.exports = function (RED) {
                         send(msg);
                     };
 
+                    // Handle the paths for operations like rename, mkdir, rmdir
                     this.sendPaths = function (err) {
                         if (err) {
                             if (done) {
@@ -439,6 +448,7 @@ module.exports = function (RED) {
                         send(msg);
                     };
 
+                    // Set the data type
                     this.setDataType = function (err) {
                         if (err) {
                             if (done) {
@@ -455,6 +465,7 @@ module.exports = function (RED) {
 
                     };
 
+                    // Handle the last modified date
                     this.lastModified = function (err, date) {
                         if (err) {
                             if (done) {
@@ -478,6 +489,7 @@ module.exports = function (RED) {
                         send(msg);
                     };
 
+                    // Handle the size of a file
                     this.getSize = function (err, bytes) {
                         if (err) {
                             if (done) {
@@ -501,6 +513,7 @@ module.exports = function (RED) {
                         send(msg);
                     };
 
+                    // Handle the SITE command
                     this.siteCommand = function (err, response, result) {
                         if (err) {
                             if (done) {
@@ -593,11 +606,38 @@ module.exports = function (RED) {
                             case 'site':
                                 conn.site(command, node.siteCommand);
                                 break;
+                            case 'putrename':
+                                conn.put(localFilename, filename, useCompression, function (err) {
+                                    if (err) {
+                                        if (throwError) node.error(err, msg);
+                                        if (showError) node.status({ fill: 'red', shape: 'ring', text: 'PUT Failed' });
+                                        conn.end();
+                                        return;
+                                    }
+
+                                    conn.rename(filename, newPath, function (err) {
+                                        if (err) {
+                                            if (throwError) node.error(err, msg);
+                                            if (showError) node.status({ fill: 'red', shape: 'ring', text: 'RENAME Failed' });
+                                            conn.end();
+                                            return;
+                                        }
+
+                                        conn.end();
+                                        node.status({ fill: 'green', shape: 'ring', text: 'PUTRENAME Successful' });
+                                        msg.payload = 'PUTRENAME operation successful.';
+                                        msg.filename = filename;
+                                        msg.localFilename = localFilename;
+                                        msg.newPath = newPath;
+                                        send(msg);
+                                    });
+                                });
+                                break;
                         }
                     });
                 }
 
-                //La connessione al server ha riscontrato un errore
+                // The connection to the server encountered an error
                 conn.on('error', function (err) {
                     if (throwError) node.error(err, msg);
                     if (showError) node.status({ fill: 'red', shape: 'ring', text: err.message });
@@ -613,6 +653,7 @@ module.exports = function (RED) {
 
             });
         } else {
+            // Missing Advanced FTP configuration
             this.error('Missing Advanced Ftp configuration');
         }
 
