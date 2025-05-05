@@ -423,11 +423,18 @@ module.exports = function (RED) {
                             return;
                         }
 
-                        if (operation == 'rename' || operation == 'putrename') {
+                        if (operation == 'rename') {
                             conn.end();
                             node.status({ fill: 'green', shape: 'ring', text: 'RENAME Successful' });
                             msg.payload = 'RENAME operation successful.';
                             msg.oldPath = oldPath;
+                            msg.newPath = newPath;
+                        }
+                        if (operation == 'putrename') {
+                            conn.end();
+                            node.status({ fill: 'green', shape: 'ring', text: 'RENAME Successful' });
+                            msg.payload = 'RENAME operation successful.';
+                            msg.filename = oldPath;
                             msg.newPath = newPath;
                         }
 
